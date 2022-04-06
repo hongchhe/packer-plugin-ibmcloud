@@ -1,9 +1,8 @@
 # Base image
-FROM ubuntu:latest
-LABEL maintainer = "Juan.Pinzon@ibm.com"
+FROM ubuntu:20.04
 
-ENV GO_VERSION 1.17.2
-ENV PACKER_VERSION 1.7.6
+ENV GO_VERSION 1.17.6
+ENV PACKER_VERSION 1.7.10
 
 ARG GO_VERSION
 ARG PACKER_VERSION
@@ -12,7 +11,7 @@ ENV PACKER_VERSION ${PACKER_VERSION}
 
 ENV HOME /root
 
-RUN set -ex \ 
+RUN set -ex \
   && apt-get -y update \
   && apt-get -y install apt-utils curl git unzip vim \
   && mkdir -p /packer-plugin-ibmcloud
@@ -24,8 +23,8 @@ WORKDIR /packer-plugin-ibmcloud
 RUN echo "[Step 1]: Install go and set go Environment variables"
 ###########################################################
 ENV GO_TAR go${GO_VERSION}.linux-amd64.tar.gz
-ENV GO_URL https://golang.org/dl/$GO_TAR  
-RUN set -ex \ 
+ENV GO_URL https://golang.org/dl/$GO_TAR
+RUN set -ex \
   && curl -OL $GO_URL \
   && tar -C /usr/local -xzf $GO_TAR \
   && mkdir -p $HOME/go/src/github.com \
@@ -34,7 +33,7 @@ RUN set -ex \
 RUN echo "Setting go Environment variables..."
 ENV GOPATH $HOME/go
 ENV GOROOT /usr/local/go
-ENV PATH $PATH:$GOPATH/bin:$GOROOT/bin 
+ENV PATH $PATH:$GOPATH/bin:$GOROOT/bin
 RUN set -ex \
   && cd $HOME \
   && echo export GOPATH=$GOPATH >> .profile \
@@ -81,7 +80,7 @@ RUN set -ex \
   && cd ./ \
   && go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@latest \
   && go mod tidy \
-  && go mod vendor \  
+  && go mod vendor \
   && go generate ./builder/ibmcloud/... \
   && go mod vendor \
   && go build .

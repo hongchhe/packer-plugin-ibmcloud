@@ -1,0 +1,7 @@
+version: '3.0'
+services:
+  ibmcloud:
+    build: .
+    image: hongchhe/packer-plugin-ibmcloud
+    container_name: ibmcloud
+    #entrypoint: ["sleep", "86400"]
